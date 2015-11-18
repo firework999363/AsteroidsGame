@@ -1,4 +1,4 @@
-//your variable declarations here
+SpaceShip wallace;
 public void setup() 
 {
   size(800,800);
@@ -6,10 +6,28 @@ public void setup()
 }
 public void draw() 
 {
-  //your code here
+  wallace= new SpaceShip();
 }
 class SpaceShip extends Floater  
-{   
+{ 
+  public SpaceShip()
+  {
+    corners = 3;
+    xCorners = new int[corners];
+    yCorners = new int[corners];
+    xCorners[0] = -8;
+    yCorners[0] = -8;
+    xCorners[1] = 16;
+    yCorners[1] = 0;
+    xCorners[2] = -8;
+    yCorners[2] = 8;
+    myColor = 255;
+    myCenterX = 400;
+    myCenterY = 400;
+    myDirectionX = 0;
+    myDirectionY = 0;
+    myPointDirection = 0;
+  }
   public void setX(int x) {myCenterX = x;}
   public int getX() {return (int)myCenterX;}
   public void setY(int y) {myCenterY = y;}
