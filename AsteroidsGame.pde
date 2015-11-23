@@ -1,12 +1,37 @@
 SpaceShip wallace;
 public void setup() 
 {
-  size(800,800);
+  size(200,200);
   background(0);
+  wallace= new SpaceShip();
 }
 public void draw() 
 {
-  wallace= new SpaceShip();
+  background(0);
+  wallace.move();
+  wallace.show();
+}
+public void keyPressed()
+{
+  if (key==CODED)
+  {
+    if (keyCode == UP)
+    {
+      wallace.accelerate(0.25);
+    }
+    if (keyCode == DOWN)
+    {
+      wallace.accelerate(-0.25);
+    }
+    if (keyCode == RIGHT)
+    {
+      wallace.rotate(5);
+    }
+    if (keyCode == LEFT)
+    {
+      wallace.rotate(-5);
+    }
+  }
 }
 class SpaceShip extends Floater  
 { 
@@ -22,8 +47,8 @@ class SpaceShip extends Floater
     xCorners[2] = -8;
     yCorners[2] = 8;
     myColor = 255;
-    myCenterX = 400;
-    myCenterY = 400;
+    myCenterX = 100;
+    myCenterY = 100;
     myDirectionX = 0;
     myDirectionY = 0;
     myPointDirection = 0;
@@ -78,7 +103,8 @@ abstract class Floater //Do NOT modify the Floater class! Make changes in the Sp
     //change the x and y coordinates by myDirectionX and myDirectionY       
     myCenterX += myDirectionX;    
     myCenterY += myDirectionY;     
-
+    System.out.println(myCenterX);
+    System.out.println(myCenterY);
     //wrap around screen    
     if(myCenterX >width)
     {     
@@ -109,7 +135,9 @@ abstract class Floater //Do NOT modify the Floater class! Make changes in the Sp
     {     
       //rotate and translate the coordinates of the floater using current direction 
       xRotatedTranslated = (int)((xCorners[nI]* Math.cos(dRadians)) - (yCorners[nI] * Math.sin(dRadians))+myCenterX);     
-      yRotatedTranslated = (int)((xCorners[nI]* Math.sin(dRadians)) + (yCorners[nI] * Math.cos(dRadians))+myCenterY);      
+      yRotatedTranslated = (int)((xCorners[nI]* Math.sin(dRadians)) + (yCorners[nI] * Math.cos(dRadians))+myCenterY);  
+      // System.out.println(xRotatedTranslated);
+      // System.out.println(yRotatedTranslated);
       vertex(xRotatedTranslated,yRotatedTranslated);    
     }   
     endShape(CLOSE);  
