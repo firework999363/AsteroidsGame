@@ -1,17 +1,30 @@
 boolean rotateL = false; 
 boolean rotateR = false;
-boolean accel =false;
-boolean decell =false;
+boolean accel = false;
+boolean decell = false;
+boolean hyper = false;
+public double dX1,dX2,dY1,dY2;
+boolean hyperspace = false;
 SpaceShip wallace;
+public int theFrame;
 public void setup() 
 {
+  noStroke();
   size(800,800);
   background(0);
   wallace= new SpaceShip();
+  dX1 = 400;
+  dY1 = 400;
 }
 public void draw() 
 {
   background(0);
+  if (frameCount == theFrame+2)
+  {
+    hyperspace = false;
+  }
+  dX2 = wallace.getX();
+  dY2 = wallace.getY();
   wallace.move();
   wallace.show();
   if (accel)
@@ -30,6 +43,13 @@ public void draw()
   {
     wallace.rotate(-4);
   }
+  if (wallace.getX()>10 && wallace.getX()<790 && wallace.getY()>10 && wallace.getY()<790 && hyperspace == false)
+  {
+    wallace.setDirectionX(wallace.getDirectionX() - (dX2-dX1)/43);
+    wallace.setDirectionY(wallace.getDirectionY() - (dY2-dY1)/43);
+  }
+  dX1 = dX2;
+  dY1 = dY2;
 }
 public void keyPressed()
 {
@@ -49,13 +69,24 @@ public void keyPressed()
   {
     rotateR = true;
   }
-  // if (key == 113)
-  // {
-  //   int a = (int)(Math.random()*700) +50;
-  //   int b = (int)(Math.random()*700) +50;
-  //   wallace.setX(a);
-  //   wallace.setY(b);
-  // }
+  if (key == 113 && hyper == false)
+  {
+    hyperspace = true;
+    hyper = true;
+    theFrame = frameCount;
+    wallace.setDirectionX(0);
+    wallace.setDirectionY(0);
+    int c = (int)(Math.random()*360);
+    wallace.setPointDirection(c);
+    int a = (int)(Math.random()*700) +50;
+    int b = (int)(Math.random()*700) +50;
+    wallace.setX(a);
+    wallace.setY(b);
+  }
+}
+public void starfield()
+{
+  
 }
 public void keyReleased()
 {
@@ -77,11 +108,17 @@ public void keyReleased()
   }
   if (key == 113)
   {
-    int a = (int)(Math.random()*700) +50;
-    int b = (int)(Math.random()*700) +50;
-    wallace.setX(a);
-    wallace.setY(b);
+    hyper = false;
   }
+  // if (key == 113)
+  // {
+  //   hyperspace = true;
+  //   theFrame = frameCount;
+  //   int a = (int)(Math.random()*700) +50;
+  //   int b = (int)(Math.random()*700) +50;
+  //   wallace.setX(a);
+  //   wallace.setY(b);
+  // }
 }
 class SpaceShip extends Floater  
 { 
@@ -90,33 +127,33 @@ class SpaceShip extends Floater
     corners = 14;
     xCorners = new int[corners];
     yCorners = new int[corners];
-    xCorners[0] = 0;
+    xCorners[0] = -10;
     yCorners[0] = -26;
-    xCorners[1] = 0;
+    xCorners[1] = -10;
     yCorners[1] = -8;
-    xCorners[2] = -8;
+    xCorners[2] = -18;
     yCorners[2] = 0;
-    xCorners[3] = 0;
+    xCorners[3] = -10;
     yCorners[3] = 8;
-    xCorners[4] = 0;
+    xCorners[4] = -10;
     yCorners[4] = 26;
-    xCorners[5] = 20;
+    xCorners[5] = 10;
     yCorners[5] = 14;
-    xCorners[6] = 20;
+    xCorners[6] = 10;
     yCorners[6] = 10;
-    xCorners[7] = 24;
+    xCorners[7] = 14;
     yCorners[7] = 8;
-    xCorners[8] = 24;
+    xCorners[8] = 14;
     yCorners[8] = 4;
-    xCorners[9] = 32;
+    xCorners[9] = 22;
     yCorners[9] = 0;
-    xCorners[10] = 24;
+    xCorners[10] = 14;
     yCorners[10] = -4;
-    xCorners[11] = 24;
+    xCorners[11] = 14;
     yCorners[11] = -8;
-    xCorners[12] = 20;
+    xCorners[12] = 10;
     yCorners[12] = -10;
-    xCorners[13] = 20;
+    xCorners[13] = 10;
     yCorners[13] = -14;
     myColor = 255;
     myCenterX = 400;
