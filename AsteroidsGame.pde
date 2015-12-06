@@ -1,30 +1,69 @@
+//boolean control movement
 boolean rotateL = false; 
 boolean rotateR = false;
 boolean accel = false;
 boolean decell = false;
 boolean hyper = false;
+//to control effects cuz it is sorta distracting
+boolean sparkles = true;
+//boolean to leave instruction page
+boolean startGame = false;
 public double dX1,dX2,dY1,dY2;
 boolean hyperspace = false;
+ArrayList <Asteroid> spaceRock= new ArrayList <Asteroid> ();
+Starfield[] stars;
 SpaceShip wallace;
 public int theFrame;
 public void setup() 
 {
   noStroke();
+  smooth();
   size(800,800);
-  background(0);
+  background(0,173,198);
+  stars = new Starfield[150];
+  for (int i=0; i< stars.length; i++)
+  {
+    stars[i] = new Starfield();
+  }
+  for(int i=1; i<15; i++)
+  {
+    spaceRock.add(new Asteroid());
+  }
   wallace= new SpaceShip();
   dX1 = 400;
   dY1 = 400;
 }
 public void draw() 
 {
+  if (startGame == false){instructions();}
+  else{playGame();}
+}
+public void playGame()
+{
   background(0);
+  for (int i=0; i< stars.length; i++)
+  {
+    stars[i].show();
+  }
+  if (Math.abs(wallace.getDirectionX())>12)
+  {
+    wallace.setDirectionX(10);
+  }
+  if (Math.abs(wallace.getDirectionY())>12)
+  {
+    wallace.setDirectionY(10);
+  }
   if (frameCount == theFrame+2)
   {
     hyperspace = false;
   }
   dX2 = wallace.getX();
   dY2 = wallace.getY();
+  for(int i= 1; i<spaceRock.size(); i++)
+  {
+    spaceRock.get(i).move();
+    spaceRock.get(i).show();
+  }
   wallace.move();
   wallace.show();
   if (accel)
@@ -37,16 +76,16 @@ public void draw()
   }
   if (rotateL)
   {
-    wallace.rotate(4);
+    wallace.rotate(5);
   }
   if (rotateR)
   {
-    wallace.rotate(-4);
+    wallace.rotate(-5);
   }
   if (wallace.getX()>10 && wallace.getX()<790 && wallace.getY()>10 && wallace.getY()<790 && hyperspace == false)
   {
-    wallace.setDirectionX(wallace.getDirectionX() - (dX2-dX1)/43);
-    wallace.setDirectionY(wallace.getDirectionY() - (dY2-dY1)/43);
+    wallace.setDirectionX(wallace.getDirectionX() - (dX2-dX1)/33);
+    wallace.setDirectionY(wallace.getDirectionY() - (dY2-dY1)/33);
   }
   dX1 = dX2;
   dY1 = dY2;
@@ -69,6 +108,14 @@ public void keyPressed()
   {
     rotateR = true;
   }
+  if (key == 116)
+  {
+    sparkles = !sparkles;
+  }
+  if (key == 32)
+  {
+    startGame = true;
+  }
   if (key == 113 && hyper == false)
   {
     hyperspace = true;
@@ -84,9 +131,40 @@ public void keyPressed()
     wallace.setY(b);
   }
 }
-public void starfield()
+class Starfield
 {
-  
+  float s;
+  float x;
+  float y;
+  public Starfield()
+  {
+    noStroke();
+    s = (float)(Math.random()*8)+1.8;
+    x = (float)Math.random()*800;
+    y = (float)Math.random()*800;
+  }
+  public void show()
+  { 
+    if (frameCount%4 == 0 && sparkles == true)
+    {
+      int temp = (int)(Math.random()*180)+50;
+      fill(temp, temp, temp-50);
+    }
+    else
+    {
+      fill(100,100,70);
+    }
+    beginShape();
+    vertex((20.0/s)+x,(0.0/s)+y);
+    bezierVertex((15.0/s)+x, (25.0/s)+y, (15.0/s)+x, (25.0/s)+y, (0.0/s)+x, (30.0/s)+y);
+    vertex((0.0/s)+x,(30.0/s)+y);
+    bezierVertex((15.0/s)+x, (35.0/s)+y, (15.0/s)+x, (35.0/s)+y, (20.0/s)+x, (60.0/s)+y);
+    vertex((20.0/s)+x,(60.0/s)+y);
+    bezierVertex((25.0/s)+x, (35.0/s)+y, (25.0/s)+x, (35.0/s)+y, (40.0/s)+x, (30.0/s)+y);
+    vertex((40.0/s)+x,(30.0/s)+y);
+    bezierVertex((25.0/s)+x, (25.0/s)+y, (25.0/s)+x, (25.0/s)+y, (20.0/s)+x, (0.0/s)+y);
+    endShape();
+  }
 }
 public void keyReleased()
 {
@@ -110,15 +188,65 @@ public void keyReleased()
   {
     hyper = false;
   }
-  // if (key == 113)
-  // {
-  //   hyperspace = true;
-  //   theFrame = frameCount;
-  //   int a = (int)(Math.random()*700) +50;
-  //   int b = (int)(Math.random()*700) +50;
-  //   wallace.setX(a);
-  //   wallace.setY(b);
-  // }
+}
+class Asteroid extends Floater
+{
+  private int myRotation;
+  public Asteroid()
+  {
+    corners = 11;
+    xCorners = new int[corners];
+    yCorners = new int[corners];
+    xCorners[0] = -2;
+    yCorners[0] = 9;
+    xCorners[1] = 4;
+    yCorners[1] = 17;
+    xCorners[2] = 17;
+    yCorners[2] = 4;
+    xCorners[3] = 21;
+    yCorners[3] = 3;
+    xCorners[4] = 24;
+    yCorners[4] = -8;
+    xCorners[5] = 15;
+    yCorners[5] = -24;
+    xCorners[6] = 1;
+    yCorners[6] = -17;
+    xCorners[7] = -16;
+    yCorners[7] = -22;
+    xCorners[8] = -28;
+    yCorners[8] = -3;
+    xCorners[9] = -20;
+    yCorners[9] = 17;
+    xCorners[10] = -6;
+    yCorners[10] = 20;
+    myColor = 200;
+    myCenterX=(int)(Math.random()*800);
+    myCenterY=(int)(Math.random()*800);
+    setDirectionX((int)(Math.random()*4)-2);
+    setDirectionY((int)(Math.random()*4)-2);
+    myPointDirection=0;
+    myRotation=((int)(Math.random()*6)-3);
+  }
+  public void setX(int x) {myCenterX = x;}
+  public int getX() {return (int)myCenterX;}
+  public void setY(int y) {myCenterY = y;}
+  public int getY() {return (int)myCenterY;}
+  public void setDirectionX(double x) {myDirectionX = x;}
+  public double getDirectionX() {return myDirectionX;}
+  public void setDirectionY(double y) {myDirectionY = y;}
+  public double getDirectionY() {return myDirectionY;}
+  public void setPointDirection(int degrees) {myPointDirection = degrees;}
+  public double getPointDirection() {return myPointDirection;}
+  public void move()
+  {
+    rotate(myRotation);
+    super.move();
+    if(myCenterX>-1)
+    {
+      myCenterX=myCenterX+2;
+      myCenterY++;
+    }
+  }
 }
 class SpaceShip extends Floater  
 { 
@@ -211,9 +339,7 @@ abstract class Floater //Do NOT modify the Floater class! Make changes in the Sp
   {      
     //change the x and y coordinates by myDirectionX and myDirectionY       
     myCenterX += myDirectionX;    
-    myCenterY += myDirectionY;     
-    //System.out.println(myCenterX);
-    //System.out.println(myCenterY);
+    myCenterY += myDirectionY;
     //wrap around screen    
     if(myCenterX >width)
     {     
@@ -235,7 +361,8 @@ abstract class Floater //Do NOT modify the Floater class! Make changes in the Sp
   public void show ()  //Draws the floater at the current position  
   {             
     fill(myColor);   
-    stroke(myColor);    
+    stroke(myColor);  
+    noStroke();  
     //convert degrees to radians for sin and cos         
     double dRadians = myPointDirection*(Math.PI/180);                 
     int xRotatedTranslated, yRotatedTranslated;    
@@ -252,4 +379,49 @@ abstract class Floater //Do NOT modify the Floater class! Make changes in the Sp
     endShape(CLOSE);  
   }   
 } 
-
+public void instructions()
+{
+  fill(255);
+  rect(355,100,90,90,15);
+  rect(355,200,90,90,15);
+  rect(455,200,90,90,15);
+  rect(255,200,90,90,15);
+  rect(285,400,90,90,15);
+  rect(425,400,90,90,15);
+  textSize(40);
+  fill(0);
+  text("W", 383, 145);
+  text("S", 386, 245);
+  text("D", 483, 245);
+  text("A", 283, 245);
+  text("Q", 313, 445);
+  text("T", 456, 445);
+  textSize(16);
+  text("FORWARD", 360, 170);
+  text("RIGHT", 476, 270);
+  text("LEFT", 277, 270);
+  text("WARP", 305, 470);
+  textSize(10);
+  text("TOGGLE EFFECTS", 430, 470);
+  text("BACKWARDS", 365, 270);
+  if ((mouseX>300) && (mouseX<500) && (mouseY>730) && (mouseY<780))
+  {
+    fill(140);
+    if(mouseButton == LEFT)
+    {
+      fill(100);
+    }
+  }
+  else{fill(180);}
+  rect(300,730,200,50);
+  textSize(40);
+  fill(0);
+  text("START",340,770);
+}
+void mouseReleased()
+{
+  if ((mouseX>300) && (mouseX<500) && (mouseY>730) && (mouseY<780))
+  {
+    startGame = true;
+  }
+}
