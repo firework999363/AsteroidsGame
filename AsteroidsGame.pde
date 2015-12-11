@@ -1,18 +1,21 @@
+public int lives = 5;
 //boolean control movement
 boolean rotateL = false; 
 boolean rotateR = false;
 boolean accel = false;
 boolean decell = false;
 boolean hyper = false;
+boolean shooting = false;
 //to control effects cuz it is sorta distracting
 boolean sparkles = true;
 //boolean to leave instruction page
 boolean startGame = false;
 public double dX1,dX2,dY1,dY2;
 boolean hyperspace = false;
-ArrayList <Asteroid> spaceRock= new ArrayList <Asteroid> ();
+ArrayList <Asteroid> spaceRock = new ArrayList <Asteroid>();
 Starfield[] stars;
 SpaceShip wallace;
+ArrayList <Bullet> pewpew = new ArrayList <Bullet>();
 public int theFrame;
 public void setup() 
 {
@@ -45,17 +48,34 @@ public void playGame()
   {
     stars[i].show();
   }
-  if (Math.abs(wallace.getDirectionX())>12)
+  if (wallace.getDirectionX()>12)
   {
     wallace.setDirectionX(10);
   }
-  if (Math.abs(wallace.getDirectionY())>12)
+  if (wallace.getDirectionX()<-12)
+  {
+    wallace.setDirectionX(-10);
+  }
+  if (wallace.getDirectionY()>12)
   {
     wallace.setDirectionY(10);
+  }
+  if (wallace.getDirectionY()<-12)
+  {
+    wallace.setDirectionY(-10);
   }
   if (frameCount == theFrame+2)
   {
     hyperspace = false;
+  }
+  if (shooting == true)
+  {
+    pewpew.add(new Bullet(wallace));
+  }
+  for(int i= 1; i<pewpew.size(); i++)
+  {
+    pewpew.get(i).move();
+    pewpew.get(i).show();
   }
   dX2 = wallace.getX();
   dY2 = wallace.getY();
@@ -63,6 +83,20 @@ public void playGame()
   {
     spaceRock.get(i).move();
     spaceRock.get(i).show();
+    for(int k = 1; k<pewpew.size(); k++)
+    {
+      if (dist(spaceRock.get(i).getX(),spaceRock.get(i).getY(),wallace.getX(),wallace.getY()) < 35)
+    {
+      lives = lives -1;
+      break;
+    }
+      if (dist(spaceRock.get(i).getX(),spaceRock.get(i).getY(),pewpew.get(k).getX(),pewpew.get(k).getY()) < 25)
+      {
+        spaceRock.remove(i);
+        pewpew.remove(k);
+        break;
+      }
+    }
   }
   wallace.move();
   wallace.show();
@@ -114,7 +148,11 @@ public void keyPressed()
   }
   if (key == 32)
   {
-    startGame = true;
+    if (startGame == false)
+    {
+      startGame = true;
+    }
+    shooting = true;
   }
   if (key == 113 && hyper == false)
   {
@@ -129,41 +167,6 @@ public void keyPressed()
     int b = (int)(Math.random()*700) +50;
     wallace.setX(a);
     wallace.setY(b);
-  }
-}
-class Starfield
-{
-  float s;
-  float x;
-  float y;
-  public Starfield()
-  {
-    noStroke();
-    s = (float)(Math.random()*8)+1.8;
-    x = (float)Math.random()*800;
-    y = (float)Math.random()*800;
-  }
-  public void show()
-  { 
-    if (frameCount%4 == 0 && sparkles == true)
-    {
-      int temp = (int)(Math.random()*180)+50;
-      fill(temp, temp, temp-50);
-    }
-    else
-    {
-      fill(100,100,70);
-    }
-    beginShape();
-    vertex((20.0/s)+x,(0.0/s)+y);
-    bezierVertex((15.0/s)+x, (25.0/s)+y, (15.0/s)+x, (25.0/s)+y, (0.0/s)+x, (30.0/s)+y);
-    vertex((0.0/s)+x,(30.0/s)+y);
-    bezierVertex((15.0/s)+x, (35.0/s)+y, (15.0/s)+x, (35.0/s)+y, (20.0/s)+x, (60.0/s)+y);
-    vertex((20.0/s)+x,(60.0/s)+y);
-    bezierVertex((25.0/s)+x, (35.0/s)+y, (25.0/s)+x, (35.0/s)+y, (40.0/s)+x, (30.0/s)+y);
-    vertex((40.0/s)+x,(30.0/s)+y);
-    bezierVertex((25.0/s)+x, (25.0/s)+y, (25.0/s)+x, (25.0/s)+y, (20.0/s)+x, (0.0/s)+y);
-    endShape();
   }
 }
 public void keyReleased()
@@ -188,8 +191,86 @@ public void keyReleased()
   {
     hyper = false;
   }
+  if (key == 32)
+  {
+    shooting = false;
+  }
 }
-class Asteroid extends Floater
+// public void keyTyped()
+// {
+//   if (key == 32)
+//   {
+//     shooting = true;
+//   } 
+// }
+class Starfield
+{
+  float s;
+  float x;
+  float y;
+  public Starfield()
+  {
+    noStroke();
+    s = (float)(Math.random()*8)+1.8;
+    x = (float)Math.random()*800;
+    y = (float)Math.random()*800;
+  }
+  public void show()
+  { 
+    if (frameCount%3 == 0 && sparkles == true)
+    {
+      int temp = (int)(Math.random()*205)+50;
+      fill(temp, temp, temp-50);
+    }
+    else
+    {
+      fill(130,105,0);
+    }
+    beginShape();
+    vertex((20.0/s)+x,(0.0/s)+y);
+    bezierVertex((15.0/s)+x, (25.0/s)+y, (15.0/s)+x, (25.0/s)+y, (0.0/s)+x, (30.0/s)+y);
+    vertex((0.0/s)+x,(30.0/s)+y);
+    bezierVertex((15.0/s)+x, (35.0/s)+y, (15.0/s)+x, (35.0/s)+y, (20.0/s)+x, (60.0/s)+y);
+    vertex((20.0/s)+x,(60.0/s)+y);
+    bezierVertex((25.0/s)+x, (35.0/s)+y, (25.0/s)+x, (35.0/s)+y, (40.0/s)+x, (30.0/s)+y);
+    vertex((40.0/s)+x,(30.0/s)+y);
+    bezierVertex((25.0/s)+x, (25.0/s)+y, (25.0/s)+x, (25.0/s)+y, (20.0/s)+x, (0.0/s)+y);
+    endShape();
+  }
+}
+class Bullet extends Floater
+{
+  public Bullet(SpaceShip theShip)
+  {
+    myCenterX = wallace.getX();
+    myCenterY = wallace.getY();
+    myPointDirection = wallace.getPointDirection();
+    double dRadians =myPointDirection*(Math.PI/180);
+    myDirectionX = 5 * Math.cos(dRadians) + (wallace.getDirectionX());
+    myDirectionY = 5 * Math.sin(dRadians) + (wallace.getDirectionY());
+  }
+  public void setX(int x) {myCenterX = x;}
+  public int getX() {return (int)myCenterX;}
+  public void setY(int y) {myCenterY = y;}
+  public int getY() {return (int)myCenterY;}
+  public void setDirectionX(double x) {myDirectionX = x;}
+  public double getDirectionX() {return myDirectionX;}
+  public void setDirectionY(double y) {myDirectionY = y;}
+  public double getDirectionY() {return myDirectionY;}
+  public void setPointDirection(int degrees) {myPointDirection = degrees;}
+  public double getPointDirection() {return myPointDirection;}
+  public void show()
+  {
+    fill(255);
+    ellipse((float)myCenterX,(float)myCenterY,8,8);
+  }
+  public void move ()   //move the floater in the current direction of travel
+  {
+    myCenterX += myDirectionX;    
+    myCenterY += myDirectionY;
+  } 
+}
+class Asteroid extends Floater 
 {
   private int myRotation;
   public Asteroid()
@@ -220,11 +301,11 @@ class Asteroid extends Floater
     xCorners[10] = -6;
     yCorners[10] = 20;
     myColor = 200;
-    myCenterX=(int)(Math.random()*800);
-    myCenterY=(int)(Math.random()*800);
+    setX((int)(Math.random()*800));
+    setY((int)(Math.random()*800));
     setDirectionX((int)(Math.random()*4)-2);
     setDirectionY((int)(Math.random()*4)-2);
-    myPointDirection=0;
+    setPointDirection(0);
     myRotation=((int)(Math.random()*6)-3);
   }
   public void setX(int x) {myCenterX = x;}
