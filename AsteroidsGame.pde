@@ -1,4 +1,7 @@
-public int lives = 5;
+public boolean i = true;
+public int lives = 100;
+public int ll;
+public boolean winner =  false;
 //boolean control movement
 boolean rotateL = false; 
 boolean rotateR = false;
@@ -10,6 +13,7 @@ boolean shooting = false;
 boolean sparkles = true;
 //boolean to leave instruction page
 boolean startGame = false;
+boolean gameOver = false;
 public double dX1,dX2,dY1,dY2;
 boolean hyperspace = false;
 ArrayList <Asteroid> spaceRock = new ArrayList <Asteroid>();
@@ -28,7 +32,7 @@ public void setup()
   {
     stars[i] = new Starfield();
   }
-  for(int i=1; i<15; i++)
+  for(int i=1; i<21; i++)
   {
     spaceRock.add(new Asteroid());
   }
@@ -39,11 +43,14 @@ public void setup()
 public void draw() 
 {
   if (startGame == false){instructions();}
-  else{playGame();}
+  else if (startGame && gameOver == false && winner == false){playGame();}
+  else if (winner){win();}
+  else {theEnd();}
 }
 public void playGame()
 {
   background(0);
+  wallace.myColor = color(255);
   for (int i=0; i< stars.length; i++)
   {
     stars[i].show();
@@ -85,11 +92,13 @@ public void playGame()
     spaceRock.get(i).show();
     for(int k = 1; k<pewpew.size(); k++)
     {
-      if (dist(spaceRock.get(i).getX(),spaceRock.get(i).getY(),wallace.getX(),wallace.getY()) < 35)
-    {
-      lives = lives -1;
-      break;
-    }
+      if (dist(spaceRock.get(i).getX(),spaceRock.get(i).getY(),wallace.getX(),wallace.getY()) < 40)
+      {
+        lives = lives -1;
+        wallace.myColor = color(200,100,100);
+        System.out.println(lives);
+        break;
+      }
       if (dist(spaceRock.get(i).getX(),spaceRock.get(i).getY(),pewpew.get(k).getX(),pewpew.get(k).getY()) < 25)
       {
         spaceRock.remove(i);
@@ -116,13 +125,25 @@ public void playGame()
   {
     wallace.rotate(-5);
   }
-  if (wallace.getX()>10 && wallace.getX()<790 && wallace.getY()>10 && wallace.getY()<790 && hyperspace == false)
+  if (wallace.getX()>10 && wallace.getX()<790 && wallace.getY()>10 && wallace.getY()<790 && hyperspace == false && frameCount != ll && frameCount != ll + 1)
   {
-    wallace.setDirectionX(wallace.getDirectionX() - (dX2-dX1)/33);
-    wallace.setDirectionY(wallace.getDirectionY() - (dY2-dY1)/33);
+    wallace.setDirectionX(wallace.getDirectionX() - (dX2-dX1)/30);
+    wallace.setDirectionY(wallace.getDirectionY() - (dY2-dY1)/30);
   }
   dX1 = dX2;
   dY1 = dY2;
+  fill(255);
+  textSize(26);
+  text("Health: " + lives, 640, 30);
+  if (lives == 0)
+  {
+    gameOver = true;
+  }
+  if (spaceRock.size() == 1)
+  {
+    winner=true;
+  }
+  System.out.println(spaceRock.size());
 }
 public void keyPressed()
 {
@@ -167,6 +188,42 @@ public void keyPressed()
     int b = (int)(Math.random()*700) +50;
     wallace.setX(a);
     wallace.setY(b);
+  }
+  if (key == 114)
+  {
+    if (gameOver || winner)
+    {
+      ll = frameCount;
+      for(int i= 1; i<spaceRock.size(); i= i + 0)
+      {
+        spaceRock.remove(i);
+      }
+      for(int i= 1; i<pewpew.size(); i= i + 0)
+      {
+        pewpew.remove(i);
+      }
+      for(int i=1; i<21; i++)
+      {
+        spaceRock.add(new Asteroid());
+      }
+      wallace.setX(400);
+      wallace.setY(400);
+      wallace.setDirectionX(0);
+      wallace.setDirectionY(0);
+      wallace.setPointDirection(0);
+      i = true;
+      lives = 100;
+      rotateL = false; 
+      rotateR = false;
+      accel = false;
+      decell = false;
+      hyper = false;
+      shooting = false;
+      sparkles = true;
+      hyperspace = false;
+      winner = false;
+      gameOver = false;
+    }
   }
 }
 public void keyReleased()
@@ -262,7 +319,7 @@ class Bullet extends Floater
   public void show()
   {
     fill(255);
-    ellipse((float)myCenterX,(float)myCenterY,8,8);
+    ellipse((float)myCenterX,(float)myCenterY,4,4);
   }
   public void move ()   //move the floater in the current direction of travel
   {
@@ -273,6 +330,7 @@ class Bullet extends Floater
 class Asteroid extends Floater 
 {
   private int myRotation;
+  private int q,w;
   public Asteroid()
   {
     corners = 11;
@@ -303,10 +361,20 @@ class Asteroid extends Floater
     myColor = 200;
     setX((int)(Math.random()*800));
     setY((int)(Math.random()*800));
-    setDirectionX((int)(Math.random()*4)-2);
-    setDirectionY((int)(Math.random()*4)-2);
+    q = (int)(Math.random()*4)-2;
+    while (q==-2)
+    {
+      q = (int)(Math.random()*4)-2;
+    }
+    w = (int)(Math.random()*4)-2;
+    while (w==-1)
+    {
+      w = (int)(Math.random()*4)-2;
+    }
+    setDirectionX(q);
+    setDirectionY(w);
     setPointDirection(0);
-    myRotation=((int)(Math.random()*6)-3);
+    myRotation=((int)(Math.random()*7)-3);
   }
   public void setX(int x) {myCenterX = x;}
   public int getX() {return (int)myCenterX;}
@@ -488,21 +556,45 @@ public void instructions()
   if ((mouseX>300) && (mouseX<500) && (mouseY>730) && (mouseY<780))
   {
     fill(140);
-    if(mouseButton == LEFT)
-    {
-      fill(100);
-    }
+    // if(mouseButton == LEFT)
+    // {
+    //   fill(100);
+    // }
   }
   else{fill(180);}
-  rect(300,730,200,50);
-  textSize(40);
+  rect(250,730,300,50);
+  textSize(20);
   fill(0);
-  text("START",340,770);
+  text("PRESS SPACE TO START",285,762);
 }
-void mouseReleased()
+// void mouseReleased()
+// {
+//   if ((mouseX>300) && (mouseX<500) && (mouseY>730) && (mouseY<780))
+//   {
+//     startGame = true;
+//   }
+// }
+public void theEnd()
 {
-  if ((mouseX>300) && (mouseX<500) && (mouseY>730) && (mouseY<780))
-  {
-    startGame = true;
-  }
+  fill(255,0,0,1);
+  stroke(255,0,0,1);
+  rect(0,0,800,800);
+  textSize(45);
+  fill(255);
+  text("GAME OVER",280,375);
+  textSize(36);
+  fill(245);
+  text("Press R to reset",275,415);
+}
+public void win()
+{
+  fill(255,1);
+  stroke(255,1);
+  rect(0,0,800,800);
+  textSize(45);
+  fill(0);
+  text("YOU WON",280,375);
+  textSize(36);
+  fill(10);
+  text("Press R to reset",275,415);
 }
