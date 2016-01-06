@@ -96,7 +96,6 @@ public void playGame()
       {
         lives = lives -1;
         wallace.myColor = color(200,100,100);
-        System.out.println(lives);
         break;
       }
       if (dist(spaceRock.get(i).getX(),spaceRock.get(i).getY(),pewpew.get(k).getX(),pewpew.get(k).getY()) < 25)
@@ -143,7 +142,6 @@ public void playGame()
   {
     winner=true;
   }
-  System.out.println(spaceRock.size());
 }
 public void keyPressed()
 {
@@ -223,7 +221,9 @@ public void keyPressed()
       hyperspace = false;
       winner = false;
       gameOver = false;
+      shooting = true;
     }
+    
   }
 }
 public void keyReleased()
@@ -249,6 +249,10 @@ public void keyReleased()
     hyper = false;
   }
   if (key == 32)
+  {
+    shooting = false;
+  }
+  if (key == 114)
   {
     shooting = false;
   }
@@ -521,8 +525,6 @@ abstract class Floater //Do NOT modify the Floater class! Make changes in the Sp
       //rotate and translate the coordinates of the floater using current direction 
       xRotatedTranslated = (int)((xCorners[nI]* Math.cos(dRadians)) - (yCorners[nI] * Math.sin(dRadians))+myCenterX);     
       yRotatedTranslated = (int)((xCorners[nI]* Math.sin(dRadians)) + (yCorners[nI] * Math.cos(dRadians))+myCenterY);  
-      // System.out.println(xRotatedTranslated);
-      // System.out.println(yRotatedTranslated);
       vertex(xRotatedTranslated,yRotatedTranslated);    
     }   
     endShape(CLOSE);  
